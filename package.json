@@ -1,0 +1,26 @@
+{
+  "name": "particularity",
+  "version": "1.0.0",
+  "description": "find important words in a text document",
+  "main": "index.js",
+  "dependencies": {
+    "gramophone": "^0.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hue-hue-hue/particularity.git"
+  },
+  "keywords": [
+    "particularity"
+  ],
+  "author": "Jenny Yao <yaoyao@mit.edu>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hue-hue-hue/particularity/issues"
+  },
+  "homepage": "https://github.com/hue-hue-hue/particularity#readme"
+}
