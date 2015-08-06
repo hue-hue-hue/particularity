@@ -4,7 +4,9 @@
   "description": "find important words in a text document",
   "main": "index.js",
   "dependencies": {
-    "gramophone": "^0.0.3"
+    "gramophone": "0.0.3",
+    "regex": "^0.1.1",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {},
   "scripts": {
