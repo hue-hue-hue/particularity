@@ -108,7 +108,7 @@ var percentileIndex = function(data){ //returns non-stopWords and their index
 } 
 
 var gramophonePercentileIndex = function(data){ //returns non-stopWords & ngrams and their index
-	var ngramList = gramophone.extract(data, {ngrams: [1, 2], min: 1})
+	var ngramList = gramophone.extract(data, {ngrams: [1], min: 1}).concat(gramophone.extract(data, {ngrams: [2], min: 1}))
 	var gramophoneDict = {}
 	var percentileDict = percentileIndex(data)
 	for (i=0; i<ngramList.length; i++){
@@ -122,14 +122,14 @@ var gramophonePercentileIndex = function(data){ //returns non-stopWords & ngrams
 }
 
 var weights = function(data, ngram){ //find weight array of a particular ngram
-	var frequencyDict = wordFrequency(data) 
-	var percentilesDict = wordPercentile(data)
+	var frequencyDict = frequencyIndex(data) 
+	var percentilesDict = gramophonePercentileIndex(data)
 	var wordsInNgram = ngram.split(' ')
 	var weights = {}
 	for (i = 0; i<wordsInNgram.length; i++){ 
 		weights[wordsInNgram[i]] = {}
-		weights[wordsInNgram[i]].frequency = frequencyDict[wordsInNgram[i]]
-		weights[wordsInNgram[i]].percentile = percentilesDict[wordsInNgram[i]]
+		weights[wordsInNgram[i]].frequencyIndex = frequencyDict[wordsInNgram[i]]
+		weights[wordsInNgram[i]].percentileIndex = percentilesDict[wordsInNgram[i]]
 	}
 	return weights
 } 
@@ -142,26 +142,11 @@ var calculateScore = function(data, ngram, scale) {//calculate score of an ngram
 	var ngramArray = weights(data, ngram)
 	var score = 0
 	for (i = 0; i<wordsInNgram.length; i++){
-		score += ((scale*ngramArray[wordsInNgram[i]].frequency) + ((1-scale) * (ngramArray[wordsInNgram[i]].percentile)))
+		score += ((scale*ngramArray[wordsInNgram[i]].frequencyIndex) + (1-scale) * (ngramArray[wordsInNgram[i]].percentileIndex))
 	}
-	//return score/wordsInNgram.length
-	return wordsInNgram
+	return score/wordsInNgram.length
 }
 
-
-
-console.log(calculateScore('leaders of the worlds major industrial democracies resolved on monday to wean their energy hungry economies off carbon fuels marking a major step in the battle against global warming that raises the chances of a un climate deal later this year  the group of sevens energy pledge capped a successful summit for host angela merkel who revived her credentials as a climate chancellor and strengthened germanys friendship with the united states at the meeting in a bavarian resort  ties between the cold war allies have been strained in the last couple of years by spying rows but merkel appeared to put that behind her on welcoming us president barack obama who declared their countries were inseparable allies  meeting in the picturesque schloss elmau at the foot of germanys highest mountain the zugspitze the g7 leaders pressed greece to accept painful economic reforms to resolve its debt crisis and struck a firm tone on russias role in ukraine  they agreed that existing sanctions against russia would remain in place until moscow and russian backed rebels in eastern ukraine fully respect a ceasefire negotiated in minsk in february and said they could escalate sanctions if needed  on climate change the g7 leaders pledged in a communique after their two day meeting to develop long term low carbon strategies and abandon fossil fuels by the end of the century  we commit to doing our part to achieve a low carbon global economy in the long term including developing and deploying innovative technologies striving for a transformation of the energy sectors by 2050 the communique read  the leaders invited other countries to join them in their drive saying they would accelerate access to renewable energy in africa and intensify their support for vulnerable countries own efforts to manage climate change ', 'climate change'))
-var data = 'leaders of the worlds major industrial democracies resolved on monday to wean their energy hungry economies off carbon fuels marking a major step in the battle against global warming that raises the chances of a un climate deal later this year  the group of sevens energy pledge capped a successful summit for host angela merkel who revived her credentials as a climate chancellor and strengthened germanys friendship with the united states at the meeting in a bavarian resort  ties between the cold war allies have been strained in the last couple of years by spying rows but merkel appeared to put that behind her on welcoming us president barack obama who declared their countries were inseparable allies  meeting in the picturesque schloss elmau at the foot of germanys highest mountain the zugspitze the g7 leaders pressed greece to accept painful economic reforms to resolve its debt crisis and struck a firm tone on russias role in ukraine  they agreed that existing sanctions against russia would remain in place until moscow and russian backed rebels in eastern ukraine fully respect a ceasefire negotiated in minsk in february and said they could escalate sanctions if needed  on climate change the g7 leaders pledged in a communique after their two day meeting to develop long term low carbon strategies and abandon fossil fuels by the end of the century  we commit to doing our part to achieve a low carbon global economy in the long term including developing and deploying innovative technologies striving for a transformation of the energy sectors by 2050 the communique read  the leaders invited other countries to join them in their drive saying they would accelerate access to renewable energy in africa and intensify their support for vulnerable countries own efforts to manage climate change '
-var ngramList = wordFrequency(data)
-
-var scoreDict = {}
-	for (i=0; i<5; i++){
-		//scoreDict[Object.keys(ngramList)[i]] = calculateScore(data, Object.keys(ngramList)[i], scale)
-		console.log(calculateScore(data, Object.keys(ngramList)[i]))
-	}
-	//return scoreDict
-
-/*
 var data = ''
 var ngramList = {}
 exports.buildData = function(filepath){ //get a clean string for finding ngrams
@@ -170,8 +155,8 @@ exports.buildData = function(filepath){ //get a clean string for finding ngrams
 }
 
 exports.getNgrams = function(){
-	ngramList = wordFrequency(data)
-	return Object.keys(ngramList)
+	ngramList = gramophone.extract(data, {ngrams: [1], min: 1}).concat(gramophone.extract(data, {ngrams: [2], min: 1}))
+	return ngramList
 }
 
 exports.getScore = function(ngram, scale){ //get the score of one ngram
@@ -195,6 +180,4 @@ exports.getScores = function(scale){ //get the score of all ngrams
 	}
 	return scoreDict
 }
-*/
 
-//add on google scores
